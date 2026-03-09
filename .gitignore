@@ -1,0 +1,27 @@
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+UserSettings/
+
+# MemoryCaptures
+[Mm]emoryCaptures/
+
+# Asset meta data should be visible
+*.pidb
+*.booproj
+*.svd
+
+# Visual Studio
+.vs/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
