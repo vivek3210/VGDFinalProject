@@ -7,14 +7,14 @@ public class PlayerController : MonoBehaviour
     public float walkSpeed = 3.5f;
     public float crouchSpeed = 2f;
     public float sprintSpeed = 6f;
+    public float rotationSpeed = 120f;
     public float gravity = -9.81f;
 
     [Header("Stealth Settings")]
     public bool isCrouching;
     public bool isSprinting;
-
-    [Range(0f, 1f)] public float visibility = 0.5f;  // 0 = invisible, 1 = fully visible
-    [Range(0f, 1f)] public float noiseLevel = 0.2f;  // 0 = silent, 1 = loud
+    [Range(0f, 1f)] public float visibility = 0.5f;
+    [Range(0f, 1f)] public float noiseLevel = 0.2f;
 
     private CharacterController controller;
     private Vector3 velocity;
@@ -32,31 +32,36 @@ public class PlayerController : MonoBehaviour
 
     void HandleMovement()
     {
-        float moveX = Input.GetAxis("Horizontal");
+        // Forward/backward input: W / S
         float moveZ = Input.GetAxis("Vertical");
 
-        Vector3 move = transform.right * moveX + transform.forward * moveZ;
+        // Left/right rotation: A / D
+        float turn = Input.GetAxis("Horizontal");
+        transform.Rotate(0f, turn * rotationSpeed * Time.deltaTime, 0f);
+
+        // Determine direction and speed
+        Vector3 moveDir = transform.forward * moveZ;
 
         if (Input.GetKey(KeyCode.LeftControl))
         {
             isCrouching = true;
             isSprinting = false;
-            controller.Move(move * crouchSpeed * Time.deltaTime);
+            controller.Move(moveDir * crouchSpeed * Time.deltaTime);
         }
         else if (Input.GetKey(KeyCode.LeftShift))
         {
             isSprinting = true;
             isCrouching = false;
-            controller.Move(move * sprintSpeed * Time.deltaTime);
+            controller.Move(moveDir * sprintSpeed * Time.deltaTime);
         }
         else
         {
             isCrouching = false;
             isSprinting = false;
-            controller.Move(move * walkSpeed * Time.deltaTime);
+            controller.Move(moveDir * walkSpeed * Time.deltaTime);
         }
 
-        // Apply gravity
+        // Apply gravity manually
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }
