@@ -16,7 +16,7 @@ public abstract class GuardAI : MonoBehaviour
     [Header("Detection State")]
     public bool playerDetected = false;
     public float detectionCooldown = 3f;
-    private float detectTimer = 0f;
+    protected float detectTimer = 0f;
 
     protected virtual void Start()
     {
@@ -24,25 +24,19 @@ public abstract class GuardAI : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
         if (patrolPoints != null && patrolPoints.Length > 0)
-        {
             agent.destination = patrolPoints[0].position;
-        }
     }
 
     protected virtual void Update()
     {
-        if (playerDetected)
-        {
-            ChasePlayer();
-        }
-        else
-        {
-            Patrol();
-            DetectPlayer(); // defined in child class
-        }
-    }
+        // Always let each guard type re-check its detection logic
+        DetectPlayer();
 
-    /*** Core Guard Behaviors ***/
+        if (playerDetected)
+            ChasePlayer();
+        else
+            Patrol();
+    }
 
     protected virtual void Patrol()
     {
@@ -70,9 +64,16 @@ public abstract class GuardAI : MonoBehaviour
         {
             playerDetected = false;
             detectTimer = 0f;
+            ReturnToPatrol();
         }
     }
 
-    /*** To be Implemented by Child Classes ***/
+    protected void ReturnToPatrol()
+    {
+        if (patrolPoints.Length == 0) return;
+        agent.destination = patrolPoints[currentPatrolIndex].position;
+    }
+
+    // Child classes must define exactly how to detect
     protected abstract void DetectPlayer();
 }
