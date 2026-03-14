@@ -1,3 +1,4 @@
+# Unity generated folders
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
@@ -9,12 +10,7 @@ UserSettings/
 # MemoryCaptures
 [Mm]emoryCaptures/
 
-# Asset meta data should be visible
-*.pidb
-*.booproj
-*.svd
-
-# Visual Studio
+# Visual Studio / Rider
 .vs/
 *.csproj
 *.unityproj
