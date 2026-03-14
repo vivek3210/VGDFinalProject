@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: a7fa87652e796e149bcf74bfcbfdef8f
+AssetOrigin:
+  serializedVersion: 1
+  productId: 227142
+  packageName: 3D Character Sci-Fi Robots Bundle
+  packageVersion: 1.3.0
+  assetPath: Assets/Same Gev Dudios/Sci-Fi Robots Bundle/Models/Paperman.fbx
+  uploadId: 745844
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -16,8 +23,6 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -107,10 +112,3 @@ ModelImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 227142
-  packageName: 3D Character Sci-Fi Robots Bundle
-  packageVersion: 1.3.0
-  assetPath: Assets/Same Gev Dudios/Sci-Fi Robots Bundle/Models/Paperman.fbx
-  uploadId: 745844
