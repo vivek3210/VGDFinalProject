@@ -3,7 +3,7 @@ using UnityEngine;
 public class HearingGuard : GuardAI
 {
     [Header("Hearing Settings")]
-    public float baseHearingRadius = 8f;
+    public float baseHearingRadius = 0.05f;
 
     protected override void DetectPlayer()
     {
