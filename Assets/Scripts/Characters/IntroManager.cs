@@ -7,7 +7,7 @@ public class IntroManager : MonoBehaviour
     {
         if (Input.anyKeyDown)
         {
-            SceneManager.LoadScene("SampleScene"); //change this to next scene
+            SceneManager.LoadScene("DemoScene"); //change this to next scene
         }
     }
 }
