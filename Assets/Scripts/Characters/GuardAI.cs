@@ -17,38 +17,86 @@ public abstract class GuardAI : MonoBehaviour
     public bool playerDetected = false;
     public float detectionCooldown = 3f;
     protected float detectTimer = 0f;
+    protected bool hasDetectedPlayer = false;
+
+    [Header("Debug")]
+    public bool debugPathStatus = false;
 
     protected virtual void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
-        if (patrolPoints != null && patrolPoints.Length > 0)
-            agent.destination = patrolPoints[0].position;
+        if (agent == null)
+        {
+            Debug.LogError($"{name}: NavMeshAgent component is missing.");
+            enabled = false;
+            return;
+        }
+
+        if (player == null)
+        {
+            Debug.LogWarning($"{name}: Could not find player with tag 'Player'.");
+        }
+
+        if (patrolPoints != null && patrolPoints.Length > 0 && patrolPoints[0] != null)
+        {
+            agent.SetDestination(patrolPoints[0].position);
+        }
     }
 
     protected virtual void Update()
     {
-        // Always let each guard type re-check its detection logic
         DetectPlayer();
 
         if (playerDetected)
+        {
+            hasDetectedPlayer = true;
+            detectTimer = 0f;
             ChasePlayer();
+        }
+        else if (hasDetectedPlayer)
+        {
+            detectTimer += Time.deltaTime;
+
+            if (detectTimer < detectionCooldown)
+            {
+                ChasePlayer();
+            }
+            else
+            {
+                hasDetectedPlayer = false;
+                detectTimer = 0f;
+                ReturnToPatrol();
+            }
+        }
         else
+        {
             Patrol();
+        }
     }
 
     protected virtual void Patrol()
     {
-        if (patrolPoints.Length == 0) return;
+        if (patrolPoints == null || patrolPoints.Length == 0)
+            return;
 
-        if (!agent.pathPending && agent.remainingDistance < 0.3f)
+        if (patrolPoints[currentPatrolIndex] == null)
+            return;
+
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.1f)
         {
             waitCounter += Time.deltaTime;
+
             if (waitCounter >= waitTimeAtPoint)
             {
                 currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length;
-                agent.destination = patrolPoints[currentPatrolIndex].position;
+
+                if (patrolPoints[currentPatrolIndex] != null)
+                {
+                    agent.SetDestination(patrolPoints[currentPatrolIndex].position);
+                }
+
                 waitCounter = 0f;
             }
         }
@@ -56,24 +104,51 @@ public abstract class GuardAI : MonoBehaviour
 
     protected virtual void ChasePlayer()
     {
-        if (player == null) return;
-        agent.destination = player.position;
+        if (player == null)
+            return;
 
-        detectTimer += Time.deltaTime;
-        if (detectTimer >= detectionCooldown)
+        if (agent == null || !agent.isOnNavMesh)
+            return;
+
+        agent.SetDestination(player.position);
+
+        if (debugPathStatus && !agent.pathPending)
         {
-            playerDetected = false;
-            detectTimer = 0f;
-            ReturnToPatrol();
+            if (agent.pathStatus == NavMeshPathStatus.PathComplete)
+            {
+                Debug.Log($"{name}: path to player is COMPLETE");
+            }
+            else if (agent.pathStatus == NavMeshPathStatus.PathPartial)
+            {
+                Debug.LogWarning($"{name}: path to player is PARTIAL");
+            }
+            else if (agent.pathStatus == NavMeshPathStatus.PathInvalid)
+            {
+                Debug.LogWarning($"{name}: path to player is INVALID");
+            }
         }
     }
 
     protected void ReturnToPatrol()
     {
-        if (patrolPoints.Length == 0) return;
-        agent.destination = patrolPoints[currentPatrolIndex].position;
+        playerDetected = false;
+        detectTimer = 0f;
+        waitCounter = 0f;
+
+        if (patrolPoints == null || patrolPoints.Length == 0)
+            return;
+
+        if (patrolPoints[currentPatrolIndex] != null && agent != null && agent.isOnNavMesh)
+        {
+            agent.SetDestination(patrolPoints[currentPatrolIndex].position);
+        }
     }
 
-    // Child classes must define exactly how to detect
+    protected void ForceReturnToPatrol()
+    {
+        hasDetectedPlayer = false;
+        ReturnToPatrol();
+    }
+
     protected abstract void DetectPlayer();
 }

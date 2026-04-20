@@ -929,6 +929,7 @@ MonoBehaviour:
   waitTimeAtPoint: 2
   playerDetected: 0
   detectionCooldown: 6
+  debugPathStatus: 1
   viewRadius: 20
   viewAngle: 120
   obstacleMask:
@@ -1691,14 +1692,14 @@ MonoBehaviour:
     m_Bits: 4294967295
   m_UseGeometry: 0
   m_DefaultArea: 0
-  m_GenerateLinks: 0
+  m_GenerateLinks: 1
   m_IgnoreNavMeshAgent: 1
   m_IgnoreNavMeshObstacle: 1
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
-  m_MinRegionArea: 2
+  m_VoxelSize: 0.1
+  m_MinRegionArea: 0
   m_NavMeshData: {fileID: 23800000, guid: c27284a69a9f34fce863940e1d5dc844, type: 2}
   m_BuildHeightMesh: 0
 --- !u!4 &458308421
@@ -5290,7 +5291,11 @@ MonoBehaviour:
   waitTimeAtPoint: 2
   playerDetected: 0
   detectionCooldown: 3
+  debugPathStatus: 1
   baseHearingRadius: 8
+  minimumMovementToHear: 0.05
+  crouchingMakesPlayerUndetectable: 1
+  stoppingMovementCancelsChaseImmediately: 1
 --- !u!1001 &1329450642
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6489,6 +6494,7 @@ MonoBehaviour:
   waitTimeAtPoint: 2
   playerDetected: 0
   detectionCooldown: 3
+  debugPathStatus: 1
   predictionRadius: 10
   interceptDistance: 4
   memoryInterval: 0.5
