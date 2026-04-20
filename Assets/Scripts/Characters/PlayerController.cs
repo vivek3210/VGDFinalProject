@@ -16,6 +16,12 @@ public class PlayerController : MonoBehaviour
     [Range(0f, 1f)] public float visibility = 0.5f;
     [Range(0f, 1f)] public float noiseLevel = 0.2f;
 
+    // Animator-readable values
+    public float ForwardInput { get; private set; }
+    public float TurnInput { get; private set; }
+    public float MoveAmount { get; private set; }
+    public bool IsGrounded { get; private set; }
+
     private CharacterController controller;
     private Vector3 velocity;
 
@@ -32,36 +38,53 @@ public class PlayerController : MonoBehaviour
 
     void HandleMovement()
     {
-        // Forward/backward input: W / S
+        // Input
         float moveZ = Input.GetAxis("Vertical");
-
-        // Left/right rotation: A / D
         float turn = Input.GetAxis("Horizontal");
+
+        // Save values for animator
+        ForwardInput = moveZ;
+        TurnInput = turn;
+        MoveAmount = Mathf.Clamp01(Mathf.Abs(moveZ));
+
+        // Rotation
         transform.Rotate(0f, turn * rotationSpeed * Time.deltaTime, 0f);
+
+        // Grounded check
+        IsGrounded = controller.isGrounded;
+
+        if (IsGrounded && velocity.y < 0f)
+        {
+            velocity.y = -2f;
+        }
 
         // Determine direction and speed
         Vector3 moveDir = transform.forward * moveZ;
+        float currentSpeed = walkSpeed;
 
         if (Input.GetKey(KeyCode.LeftControl))
         {
             isCrouching = true;
             isSprinting = false;
-            controller.Move(moveDir * crouchSpeed * Time.deltaTime);
+            currentSpeed = crouchSpeed;
         }
         else if (Input.GetKey(KeyCode.LeftShift))
         {
             isSprinting = true;
             isCrouching = false;
-            controller.Move(moveDir * sprintSpeed * Time.deltaTime);
+            currentSpeed = sprintSpeed;
         }
         else
         {
             isCrouching = false;
             isSprinting = false;
-            controller.Move(moveDir * walkSpeed * Time.deltaTime);
+            currentSpeed = walkSpeed;
         }
 
-        // Apply gravity manually
+        // Move player
+        controller.Move(moveDir * currentSpeed * Time.deltaTime);
+
+        // Apply gravity
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }
