@@ -111,22 +111,6 @@ public abstract class GuardAI : MonoBehaviour
             return;
 
         agent.SetDestination(player.position);
-
-        if (debugPathStatus && !agent.pathPending)
-        {
-            if (agent.pathStatus == NavMeshPathStatus.PathComplete)
-            {
-                Debug.Log($"{name}: path to player is COMPLETE");
-            }
-            else if (agent.pathStatus == NavMeshPathStatus.PathPartial)
-            {
-                Debug.LogWarning($"{name}: path to player is PARTIAL");
-            }
-            else if (agent.pathStatus == NavMeshPathStatus.PathInvalid)
-            {
-                Debug.LogWarning($"{name}: path to player is INVALID");
-            }
-        }
     }
 
     protected void ReturnToPatrol()
