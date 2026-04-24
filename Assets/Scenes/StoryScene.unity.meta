@@ -1,5 +1,10 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scenes/StoryScene.unity.meta
 guid: 9c73346d4c17347c4b8a9d758e3cd0fc
+========
+guid: 0a2541c868cdd470f899e382c3e755a9
+folderAsset: yes
+>>>>>>>> e751ea2b9b6cfb066324c7ca55114d4d4bcaebe8:Assets/PrisonEscape/Art.meta
 DefaultImporter:
   externalObjects: {}
   userData: 

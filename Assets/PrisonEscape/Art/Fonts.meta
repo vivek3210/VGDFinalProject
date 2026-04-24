@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/PrisonEscape/Art/Fonts.meta
 guid: 36b2e7e39156f4b73b105583941ee709
+========
+guid: 3f0f264239b4ea943937dd9d0fc60963
+>>>>>>>> e751ea2b9b6cfb066324c7ca55114d4d4bcaebe8:Assets/PrisonEscape/Art/Materials.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}
