@@ -4,6 +4,21 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/StoryScene.unity
+    guid: 9c73346d4c17347c4b8a9d758e3cd0fc
+  - enabled: 1
+    path: Assets/Scenes/GuardScene.unity
+    guid: 57433bf766849486db7415a6c1d56590
+  - enabled: 1
+    path: Assets/Scenes/DirectionScene.unity
+    guid: 47c9adbbe2474413ab89acc5f1408133
+  - enabled: 1
+    path: Assets/StartMenu.unity
+    guid: 4df73cb0a96ee42c793492a8db1e86c0
+  - enabled: 1
+    path: Assets/PrisonEscape/Tutorial_Demo/Demo_Scenes/DemoScene.unity
+    guid: 139fe7247bf905647981ad2d31d0f39e
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
