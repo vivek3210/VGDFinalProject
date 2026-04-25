@@ -21,7 +21,9 @@ public class GameManager : MonoBehaviour
     [Header("Player")]
     public Transform player;
     public Transform respawnPoint;
-
+    [Header("Audio")]
+    public AudioClip winSound;
+    public AudioClip gameOverSound;
     private bool isProcessingCaught = false;
 
     void Awake()
@@ -107,7 +109,12 @@ public class GameManager : MonoBehaviour
 
     public void PlayerWon()
     {
-        Time.timeScale = 0f; // pause game
+        if (winSound != null)
+        {
+            AudioSource.PlayClipAtPoint(winSound, Camera.main.transform.position, 0.8f);
+        }
+
+        Time.timeScale = 0f;
 
         if (winPanel != null)
             winPanel.SetActive(true);

@@ -24,3 +24,11 @@ Thumbs.db*.app
 CozyJailEscapeWindows/
 Build/
 Builds/
+
+# Unity exported builds
+Cozy Game.app/
+CozyJailEscapeWindows/
+Builds/
+*.app
+*.exe
+*.x86_64
