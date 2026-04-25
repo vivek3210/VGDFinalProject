@@ -20,4 +20,7 @@ UserSettings/
 
 # OS files
 .DS_Store
-Thumbs.db
+Thumbs.db*.app
+CozyJailEscapeWindows/
+Build/
+Builds/
