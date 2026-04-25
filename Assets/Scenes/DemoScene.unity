@@ -1809,7 +1809,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.1
   m_MinRegionArea: 0
   m_NavMeshData: {fileID: 23800000, guid: c27284a69a9f34fce863940e1d5dc844, type: 2}
   m_BuildHeightMesh: 0
@@ -2512,24 +2512,24 @@ MonoBehaviour:
   detectionCooldown: 3
   catchDistance: 1.2
   debugPathStatus: 0
-  bossMoveSpeed: 2
+  bossMoveSpeed: 1.2
   bossAcceleration: 3
-  baseHearingRadius: 7
-  minimumMovementToHear: 0.05
+  baseHearingRadius: 2.5
+  minimumMovementToHear: 0.2
   viewRadius: 2
   viewAngle: 20
-  centerVisionAngle: 20
+  centerVisionAngle: 8
   obstacleMask:
     serializedVersion: 2
     m_Bits: 0
   eyeHeight: 1.2
-  visibilityThreshold: 0.45
-  predictionRadius: 8
-  interceptDistance: 3
-  memoryInterval: 0.4
-  maxStoredPositions: 6
-  minimumMovementForPrediction: 0.6
-  minimumMoveAmount: 0.1
+  visibilityThreshold: 0.75
+  predictionRadius: 3.5
+  interceptDistance: 0.8
+  memoryInterval: 0.6
+  maxStoredPositions: 4
+  minimumMovementForPrediction: 1.2
+  minimumMoveAmount: 0.2
   ignoreCrouchingForPrediction: 0
   maxDistanceFromPatrolPoint: 3
   debugBossGuard: 0
@@ -6195,6 +6195,9 @@ MonoBehaviour:
   catchDistance: 1.2
   debugPathStatus: 1
   baseHearingRadius: 8
+  minimumMovementToHear: 0.05
+  crouchingMakesPlayerUndetectable: 1
+  stoppingMovementCancelsChaseImmediately: 1
 --- !u!114 &1317711353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7658,9 +7661,12 @@ MonoBehaviour:
   interceptDistance: 3
   memoryInterval: 0.5
   maxStoredPositions: 5
-  repeatedPathRadius: 2
-  repeatedPathThreshold: 3
-  losePlayerRadius: 15
+  minimumMovementForPrediction: 0.6
+  minimumMoveAmount: 0.1
+  ignoreCrouchingPlayer: 1
+  stayNearPatrolZone: 1
+  maxDistanceFromHome: 10
+  debugPrediction: 1
 --- !u!195 &1590288522
 NavMeshAgent:
   m_ObjectHideFlags: 0
