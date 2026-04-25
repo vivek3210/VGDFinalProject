@@ -20,4 +20,6 @@ UserSettings/
 
 # OS files
 .DS_Store
-Thumbs.db
+Thumbs.db*.app
+Build/
+Builds/
