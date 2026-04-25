@@ -648,7 +648,9 @@ MonoBehaviour:
   - {fileID: 705726729}
   waitTimeAtPoint: 2
   playerDetected: 0
+  isFrozen: 0
   detectionCooldown: 6
+  catchDistance: 1.2
   debugPathStatus: 1
   viewRadius: 1.5
   viewAngle: 20
@@ -1805,7 +1807,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.1
+  m_VoxelSize: 0.16666667
   m_MinRegionArea: 0
   m_NavMeshData: {fileID: 23800000, guid: c27284a69a9f34fce863940e1d5dc844, type: 2}
   m_BuildHeightMesh: 0
@@ -5316,7 +5318,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1078442817
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6118,12 +6120,11 @@ MonoBehaviour:
   - {fileID: 1441436956}
   waitTimeAtPoint: 2
   playerDetected: 0
+  isFrozen: 0
   detectionCooldown: 3
+  catchDistance: 1.2
   debugPathStatus: 1
   baseHearingRadius: 8
-  minimumMovementToHear: 0.05
-  crouchingMakesPlayerUndetectable: 1
-  stoppingMovementCancelsChaseImmediately: 1
 --- !u!114 &1317711353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7519,18 +7520,17 @@ MonoBehaviour:
   - {fileID: 1256083701}
   waitTimeAtPoint: 2
   playerDetected: 0
+  isFrozen: 0
   detectionCooldown: 3
+  catchDistance: 1.2
   debugPathStatus: 1
   predictionRadius: 7
   interceptDistance: 3
   memoryInterval: 0.5
   maxStoredPositions: 5
-  minimumMovementForPrediction: 1
-  minimumMoveAmount: 0.15
-  ignoreCrouchingPlayer: 1
-  stayNearPatrolZone: 1
-  maxDistanceFromHome: 8
-  debugPrediction: 1
+  repeatedPathRadius: 2
+  repeatedPathThreshold: 3
+  losePlayerRadius: 15
 --- !u!195 &1590288522
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -8536,7 +8536,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1886500537
 RectTransform:
   m_ObjectHideFlags: 0
