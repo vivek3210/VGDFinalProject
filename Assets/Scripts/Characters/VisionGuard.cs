@@ -26,6 +26,19 @@ public class VisionGuard : GuardAI
             playerDetected = false;
             return;
         }
+        PlayerAbilities abilities = player.GetComponent<PlayerAbilities>();
+
+        if (abilities != null && abilities.isInvisible)
+        {
+            playerDetected = false;
+
+            if (agent != null)
+            {
+                agent.ResetPath();
+            }
+
+            return;
+        }
 
         Vector3 eyePos = transform.position + Vector3.up * eyeHeight;
         Vector3 playerTarget = player.position + Vector3.up * 1.0f;

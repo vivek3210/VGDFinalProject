@@ -1,129 +1,35 @@
 using UnityEngine;
-using UnityEngine.AI;
 using System.Collections.Generic;
 
 public class PredictionGuard : GuardAI
 {
-    [Header("Prediction Settings")]
-    public float predictionRadius = 8f;
-    public float interceptDistance = 2.5f;
-    public float memoryInterval = 0.4f;
+    public float predictionRadius = 10f;
+    public float interceptDistance = 4f;
+    public float memoryInterval = .5f;
     public int maxStoredPositions = 6;
-
-    [Header("Pattern Settings")]
-    public float minimumMovementForPrediction = 0.6f;
-    public float minimumMoveAmount = 0.1f;
-    public bool ignoreCrouchingPlayer = true;
-
-    [Header("Patrol Boundary")]
-    public bool stayNearPatrolZone = true;
-    public float maxDistanceFromHome = 10f;
-
-    [Header("Debug")]
-    public bool debugPrediction = true;
+    public float repeatedPathRadius = 2f;
+    public int repeatedPathThreshold = 3;
+    public float losePlayerRadius = 15f;
 
     private List<Vector3> playerPositionMemory = new List<Vector3>();
     private float memoryTimer = 0f;
     private Vector3 predictedPosition;
     private bool hasPrediction = false;
-    private Vector3 homePosition;
-
-    protected override void Start()
-    {
-        base.Start();
-        homePosition = transform.position;
-    }
 
     protected override void DetectPlayer()
     {
-        if (player == null)
+        if (player == null) return;
+
+        float distance = Vector3.Distance(transform.position, player.position);
+
+        //keep recording player movement if close enough
+        if (distance <= predictionRadius)
         {
-            playerDetected = false;
-            hasPrediction = false;
-            return;
-        }
-
-        PlayerController pCtrl = player.GetComponent<PlayerController>();
-        if (pCtrl == null)
-        {
-            playerDetected = false;
-            hasPrediction = false;
-            return;
-        }
-
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-
-        // Only track nearby player
-        if (distanceToPlayer > predictionRadius)
-        {
-            playerDetected = false;
-            hasPrediction = false;
-            playerPositionMemory.Clear();
-            return;
-        }
-
-        // Ignore crouching if desired
-        if (ignoreCrouchingPlayer && pCtrl.isCrouching)
-        {
-            playerDetected = false;
-            hasPrediction = false;
-            return;
-        }
-
-        // Ignore if player is barely moving
-        if (pCtrl.MoveAmount < minimumMoveAmount)
-        {
-            playerDetected = false;
-            hasPrediction = false;
-            return;
-        }
-
-        RecordPlayerPosition();
-
-        if (playerPositionMemory.Count < 2)
-        {
-            playerDetected = false;
-            hasPrediction = false;
-            return;
-        }
-
-        Vector3 oldest = playerPositionMemory[0];
-        Vector3 newest = playerPositionMemory[playerPositionMemory.Count - 1];
-        Vector3 movement = newest - oldest;
-
-        if (movement.magnitude < minimumMovementForPrediction)
-        {
-            playerDetected = false;
-            hasPrediction = false;
-            return;
-        }
-
-        Vector3 moveDir = movement.normalized;
-        Vector3 candidatePrediction = player.position + moveDir * interceptDistance;
-
-        // Keep prediction near home zone
-        if (stayNearPatrolZone && Vector3.Distance(homePosition, candidatePrediction) > maxDistanceFromHome)
-        {
-            playerDetected = false;
-            hasPrediction = false;
-            return;
-        }
-
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(candidatePrediction, out hit, 2f, NavMesh.AllAreas))
-        {
-            predictedPosition = hit.position;
-            hasPrediction = true;
-            playerDetected = true;
-
-            if (debugPrediction)
-            {
-                Debug.Log($"{name} is predicting player movement.");
-            }
+            RecordPlayerPosition();
+            CheckForPattern();
         }
         else
         {
-            playerDetected = false;
             hasPrediction = false;
         }
     }
@@ -131,39 +37,76 @@ public class PredictionGuard : GuardAI
     void RecordPlayerPosition()
     {
         memoryTimer += Time.deltaTime;
-
         if (memoryTimer >= memoryInterval)
         {
             playerPositionMemory.Add(player.position);
 
             if (playerPositionMemory.Count > maxStoredPositions)
-            {
                 playerPositionMemory.RemoveAt(0);
-            }
 
             memoryTimer = 0f;
         }
     }
 
-    protected override void ChasePlayer()
+    void CheckForPattern()
     {
-        if (agent == null || !agent.isOnNavMesh)
-            return;
+        if (playerPositionMemory.Count < 2) return;
 
-        if (hasPrediction)
+        //estimate movement direction from oldest to newest remembered position
+        Vector3 start = playerPositionMemory[0];
+        Vector3 end = playerPositionMemory[playerPositionMemory.Count - 1];
+        Vector3 rawDir = end - start;
+        if (rawDir.magnitude < .1f) return;
+
+        Vector3 moveDir = rawDir.normalized;
+
+        predictedPosition = player.position + moveDir * interceptDistance;
+        hasPrediction = true;
+
+        int repeatCount = 0;
+        Vector3 currentPos = player.position;
+
+        foreach (Vector3 oldPos in playerPositionMemory)
         {
-            agent.SetDestination(predictedPosition);
+            if (Vector3.Distance(currentPos, oldPos) <= repeatedPathRadius)
+                repeatCount++;
         }
-        else
+        if (repeatCount >= repeatedPathThreshold)
         {
-            base.ChasePlayer();
+            playerDetected = true;
+            detectTimer = 0f;
+
+            //move toward predicted interception point instead of exact player location
+            agent.destination = predictedPosition;
         }
     }
 
-    protected override void Patrol()
+    protected override void ChasePlayer()
     {
-        hasPrediction = false;
-        base.Patrol();
+        if (player == null) return;
+
+        float distance = Vector3.Distance(transform.position, player.position);
+
+        if (hasPrediction)
+            agent.destination = predictedPosition;
+        else
+            agent.destination = player.position;
+
+        if (distance > losePlayerRadius)
+        {
+            detectTimer += Time.deltaTime;
+            if (detectTimer >= detectionCooldown)
+            {
+                playerDetected = false;
+                detectTimer = 0f;
+                hasPrediction = false;
+                ReturnToPatrol();
+            }
+        }
+        else
+        {
+            detectTimer = 0f;
+        }
     }
 
 #if UNITY_EDITOR
@@ -172,15 +115,14 @@ public class PredictionGuard : GuardAI
         Gizmos.color = Color.magenta;
         Gizmos.DrawWireSphere(transform.position, predictionRadius);
 
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(homePosition == Vector3.zero ? transform.position : homePosition, maxDistanceFromHome);
-
+        Gizmos.color = Color.gray;
+        Gizmos.DrawWireSphere(transform.position, losePlayerRadius);
         if (hasPrediction)
         {
             Gizmos.color = Color.green;
-            Gizmos.DrawSphere(predictedPosition, 0.35f);
-            Gizmos.DrawLine(transform.position, predictedPosition);
+            Gizmos.DrawSphere(predictedPosition, .4f);
         }
     }
 #endif
 }
+

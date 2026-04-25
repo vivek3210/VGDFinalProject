@@ -15,9 +15,14 @@ public abstract class GuardAI : MonoBehaviour
 
     [Header("Detection State")]
     public bool playerDetected = false;
+    [Header("Freeze State")]
+    public bool isFrozen = false;
     public float detectionCooldown = 3f;
     protected float detectTimer = 0f;
     protected bool hasDetectedPlayer = false;
+    [Header("Catch Settings")]
+    public float catchDistance = 1.2f;
+    private bool hasCaughtPlayer = false;
 
     [Header("Debug")]
     public bool debugPathStatus = false;
@@ -47,6 +52,23 @@ public abstract class GuardAI : MonoBehaviour
 
     protected virtual void Update()
     {
+        if (isFrozen)
+        {
+            if (agent != null)
+                agent.ResetPath();
+
+            return;
+        }
+        PlayerAbilities abilities = player != null ? player.GetComponent<PlayerAbilities>() : null;
+
+        if (abilities != null && abilities.isInvisible)
+        {
+            if (agent != null)
+                agent.ResetPath();
+
+            ForceReturnToPatrol();
+            return;
+        }
         DetectPlayer();
 
         if (playerDetected)
@@ -54,6 +76,8 @@ public abstract class GuardAI : MonoBehaviour
             hasDetectedPlayer = true;
             detectTimer = 0f;
             ChasePlayer();
+            TryCatchPlayer();
+
         }
         else if (hasDetectedPlayer)
         {
@@ -118,6 +142,7 @@ public abstract class GuardAI : MonoBehaviour
         playerDetected = false;
         detectTimer = 0f;
         waitCounter = 0f;
+        hasCaughtPlayer = false;
 
         if (patrolPoints == null || patrolPoints.Length == 0)
             return;
@@ -128,11 +153,23 @@ public abstract class GuardAI : MonoBehaviour
         }
     }
 
-    protected void ForceReturnToPatrol()
+    public void ForceReturnToPatrol()
     {
         hasDetectedPlayer = false;
         ReturnToPatrol();
     }
+    protected void TryCatchPlayer()
+    {
+        if (player == null || hasCaughtPlayer)
+            return;
 
+        float dist = Vector3.Distance(transform.position, player.position);
+
+        if (dist <= catchDistance)
+        {
+            hasCaughtPlayer = true;
+            GameManager.Instance.PlayerCaught();
+        }
+    }
     protected abstract void DetectPlayer();
 }
