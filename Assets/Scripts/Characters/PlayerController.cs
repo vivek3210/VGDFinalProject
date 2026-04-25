@@ -16,6 +16,11 @@ public class PlayerController : MonoBehaviour
     [Range(0f, 1f)] public float visibility = 0.5f;
     [Range(0f, 1f)] public float noiseLevel = 0.2f;
 
+    public float MoveAmount { get; private set; }
+    public float TurnInput { get; private set; }
+    public float ForwardInput { get; private set; }
+    public bool IsGrounded { get; private set; }
+
     private CharacterController controller;
     private Vector3 velocity;
 
@@ -32,14 +37,16 @@ public class PlayerController : MonoBehaviour
 
     void HandleMovement()
     {
-        // Forward/backward input: W / S
         float moveZ = Input.GetAxis("Vertical");
-
-        // Left/right rotation: A / D
         float turn = Input.GetAxis("Horizontal");
+
+        ForwardInput = moveZ;
+        TurnInput = turn;
+        MoveAmount = Mathf.Abs(moveZ);
+        IsGrounded = controller.isGrounded;
+
         transform.Rotate(0f, turn * rotationSpeed * Time.deltaTime, 0f);
 
-        // Determine direction and speed
         Vector3 moveDir = transform.forward * moveZ;
 
         if (Input.GetKey(KeyCode.LeftControl))
@@ -61,7 +68,9 @@ public class PlayerController : MonoBehaviour
             controller.Move(moveDir * walkSpeed * Time.deltaTime);
         }
 
-        // Apply gravity manually
+        if (controller.isGrounded && velocity.y < 0)
+            velocity.y = -2f;
+
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }
